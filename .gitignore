@@ -1,0 +1,3 @@
+# Ignoramos carpetas no necesarias para el desafío
+EnClase/
+node_modules/

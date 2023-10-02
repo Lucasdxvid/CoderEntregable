@@ -1,0 +1,35 @@
+[
+	{
+		"title": "Samsung Galaxy A32",
+		"description": "SmarthPhone de gama media",
+		"price": 242000,
+		"thumbnail": "./samsungA32.jpg",
+		"code": "AA-PROD-5",
+		"stock": 30,
+		"status": true,
+		"category": "smartphone",
+		"id": 1
+	},
+	{
+		"title": "GigaByte Aorus AP750GM",
+		"description": "750w",
+		"price": 96000,
+		"thumbnail": "./gigabyte.jpg",
+		"code": "AA-PROD-4",
+		"stock": 13,
+		"status": true,
+		"category": "power-supply ",
+		"id": 2
+	},
+	{
+		"title": "Nvidia MSI Ventus GeForce RTX 3070 VENTUS 2X OC Edition 8GB",
+		"description": "Placa de video de la familia Nvidia",
+		"price": 532000,
+		"thumbnail": "./nvidia3070.jpg.svg",
+		"code": "AA-PROD-14",
+		"stock": 3,
+		"status": true,
+		"category": "video-card",
+		"id": 3
+	}
+]
