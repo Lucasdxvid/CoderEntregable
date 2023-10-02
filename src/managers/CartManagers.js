@@ -26,7 +26,6 @@ class CartManager {
   };
 
   // Agregar un carrito nuevo.
-
   addCart = async () => {
     try {
       const allCarts = await this.getCart();
