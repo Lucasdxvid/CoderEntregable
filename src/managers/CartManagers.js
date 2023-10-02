@@ -1,151 +1,94 @@
+// Importamos el módulo 'fs' (file system) para realizar operaciones de lectura y escritura de archivos.
 import fs from "fs";
 
-class ProductManager {
+class CartManager {
   constructor(path) {
     this.path = path;
   }
 
-  // Obtener todos los productos desde el archivo JSON.
-  getProducts = async () => {
+  // Obtener lista de carritos.
+  getCart = async () => {
     try {
+      // Verifica si el archivo especificado en 'this.path' existe.
       if (fs.existsSync(this.path)) {
+        // Lee el contenido del archivo y lo convierte en una cadena de texto.
         const data = await fs.promises.readFile(this.path, "utf-8");
-        const products = JSON.parse(data);
-        return products;
+        // Convierte la cadena JSON en un objeto JavaScript.
+        const cart = JSON.parse(data);
+        return cart;
       } else {
+        // Si el archivo no existe, devuelve un array vacío.
         return [];
       }
     } catch (error) {
       console.log(error);
-      throw error;
     }
   };
 
-  // Añadir un nuevo producto al archivo JSON.
-  addProduct = async (product) => {
+  // Agregar un carrito nuevo.
+
+  addCart = async () => {
     try {
-      const allProducts = await this.getProducts();
+      const allCarts = await this.getCart();
+      let cart = {};
+      // Estructura de un carrito
+      cart.id =
+        allCarts.length === 0 ? 1 : allCarts[allCarts.length - 1].id + 1;
+      cart.products = [];
 
-      // Verificar si el código del producto ya existe.
-      if (allProducts.some((p) => p.code === product.code)) {
-        throw new Error(
-          "El código ya está en uso por otro producto (Intenta ingresar otro código)."
-        );
-      }
-
-      // Verificar que todos los campos obligatorios estén presentes.
-      if (
-        !product.title ||
-        !product.description ||
-        !product.price ||
-        !product.status ||
-        !product.code ||
-        !product.stock ||
-        !product.category
-      ) {
-        throw new Error(
-          "Todos los campos son obligatorios para añadir un nuevo producto."
-        );
-      }
-
-      // Asignar un ID único al nuevo producto.
-      product.id =
-        allProducts.length === 0
-          ? 1
-          : allProducts[allProducts.length - 1].id + 1;
-
-      // Agregar el producto a la lista y guardarla en el archivo JSON.
-      allProducts.push(product);
+      // Agrego el carrito al array de carritos
+      allCarts.push(cart);
+      // Escribe la lista actualizada de carritos en el archivo JSON.
       await fs.promises.writeFile(
         this.path,
-        JSON.stringify(allProducts, null, "\t")
+        JSON.stringify(allCarts, null, "\t")
       );
-      return product;
+      return cart;
     } catch (error) {
       console.log(error);
-      throw error;
     }
   };
 
-  // Obtener un producto por su ID.
-  getProductById = async (id) => {
+  // Encontrar carrito por ID.
+  getCartById = async (id) => {
     try {
-      const allProducts = await this.getProducts();
-      const productById = allProducts.find((p) => p.id === id);
+      const allCarts = await this.getCart();
+      const cartById = allCarts.find((p) => p.id === id);
 
-      // Verificar si el producto con la ID especificada existe.
-      if (!productById) {
-        throw new Error("No existe un producto con la ID ingresada.");
+      if (!cartById) {
+        throw new Error(`No existe un carrito con la ID = ${id}`);
       }
-      return productById;
+      return cartById;
     } catch (error) {
       console.log(error);
       throw error;
     }
   };
 
-  // Actualizar un producto por su ID.
-  updateProduct = async (id, product) => {
+  // Actualizar carrito.
+  updateCart = async (idCart, idProduct) => {
     try {
-      const allProducts = await this.getProducts();
-      const productIndex = allProducts.findIndex((p) => p.id === id);
+      const allCarts = await this.getCart();
+      const cartIndex = allCarts.findIndex((p) => p.id === idCart);
 
-      // Verificar si la ID del producto a actualizar existe.
-      if (productIndex != -1) {
-        // Verificar si el código del producto a actualizar ya existe en otro producto.
-        if (allProducts.some((p) => p.code === product.code)) {
-          throw new Error(
-            "No se puede actualizar un código de producto con uno existente."
-          );
-        } else {
-          // Actualizar los campos del producto y guardar la lista actualizada en el archivo JSON.
-          allProducts[productIndex] = {
-            title: product.title || allProducts[productIndex].title,
-            description:
-              product.description || allProducts[productIndex].description,
-            price: product.price || allProducts[productIndex].price,
-            thumbnail: product.thumbnail || allProducts[productIndex].thumbnail,
-            code: product.code || allProducts[productIndex].code,
-            stock: product.stock || allProducts[productIndex].stock,
-            status: product.status || allProducts[productIndex].status,
-            category: product.category || allProducts[productIndex].category,
-            id: id,
-          };
-
-          await fs.promises.writeFile(
-            this.path,
-            JSON.stringify(allProducts, null, "\t")
-          );
-        }
-      } else {
-        throw new Error(
-          "El ID del producto que estas intentando actualizar no existe (Intenta colocar un ID existente)."
+      if (cartIndex !== -1) {
+        const productIndex = allCarts[cartIndex].products.findIndex(
+          (product) => product.id === idProduct
         );
-      }
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
 
-  // Eliminar un producto por su ID.
-  deleteProduct = async (id) => {
-    try {
-      const allProducts = await this.getProducts();
-      const productIndex = allProducts.findIndex((p) => p.id === id);
+        if (productIndex !== -1) {
+          allCarts[cartIndex].products[productIndex].quantity++;
+        } else {
+          allCarts[cartIndex].products.push({ id: idProduct, quantity: 1 });
+        }
 
-      // Verificar si la ID del producto a eliminar existe.
-      if (productIndex != -1) {
-        // Eliminar el producto de la lista y guardar la lista actualizada en el archivo JSON.
-        allProducts.splice(productIndex, 1);
+        // Escribe la lista actualizada de carritos en el archivo JSON.
         await fs.promises.writeFile(
           this.path,
-          JSON.stringify(allProducts, null, "\t")
+          JSON.stringify(allCarts, null, "\t")
         );
       } else {
-        throw new Error(
-          "La ID del producto que quieres eliminar no existe o ya fue borrado (Intenta probar con un producto existente)."
-        );
+        throw new Error("El carrito que estas buscando no existe");
       }
     } catch (error) {
       console.log(error);
@@ -153,5 +96,4 @@ class ProductManager {
     }
   };
 }
-
-export default ProductManager;
+export default CartManager;

@@ -1,3 +1,5 @@
+// Importamos el módulo 'fs' (file system) para realizar operaciones de lectura y escritura de archivos.
+
 import fs from "fs";
 
 class ProductManager {
