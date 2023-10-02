@@ -19,6 +19,17 @@ router.get("/", async (req, res) => {
   res.send(carts);
 });
 
+// Agregar un carrito nuevo.
+router.post("/", async (req, res) => {
+    try {
+      const newCart = req.body;
+      await cartManager.addCart(newCart);
+      res.status(201).send({ status: "success", payload: product });
+    } catch (error) {
+      res.status(400).send({ error: error.message });
+    }
+  });
+
 // Obtener un carrito por su ID.
 router.get("/:cid", async (req, res) => {
   try {

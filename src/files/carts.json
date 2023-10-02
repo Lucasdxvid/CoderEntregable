@@ -33,5 +33,9 @@
 				"quantity": 3
 			}
 		]
+	},
+	{
+		"id": 4,
+		"products": []
 	}
 ]
