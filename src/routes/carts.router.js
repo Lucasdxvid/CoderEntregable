@@ -43,7 +43,7 @@ router.post("/:cid/product/:pid", async (req, res) => {
     const idProduct = Number(req.params.pid);
 
     // Verificar si el producto existe antes de actualizar el carrito.
-    const product = await productManager.getProductById(idProduct);
+    await productManager.getProductById(idProduct);
 
     await cartManager.updateCart(idCart, idProduct);
     res.status(200).send({ status: "success" });
